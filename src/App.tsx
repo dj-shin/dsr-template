@@ -2,8 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
 import './App.css';
+import * as xml from './utils/dicom/xml';
 
 function App() {
+  xml.test();
   return (
     <div className="App">
       <header className="App-header">
