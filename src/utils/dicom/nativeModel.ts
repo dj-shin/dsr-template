@@ -1,8 +1,41 @@
 import * as assert from 'assert';
+import { stringToTag, TagValue } from './common';
 
 const VR = [
     'AE',   // Application Entity
     'AS',   // Age String
+    'AT',   // Attribute Tag
+    'CS',   // Code String,
+    'DA',   // Date
+    'DS',   // Decimal String
+    'DT',   // Date Time
+    'FL',   // Floating Point Single
+    'FD',   // Floating Point Double
+    'IS',   // Integer String
+    'LO',   // Long String
+    'LT',   // Long Text
+    'OB',   // Other Byte
+    'OD',   // Other Double
+    'OF',   // Other Float
+    'OL',   // Other Long
+    'OV',   // Other 64-bit Very Long
+    'OW',   // Other Word
+    'PN',   // Person Name
+    'SH',   // Short String
+    'SL',   // Signed Long
+    'SQ',   // Sequence of Items
+    'SS',   // Signed Short
+    'ST',   // Short Text
+    'SV',   // Signed 64-bit Very Long
+    'TM',   // Time
+    'UC',   // Unlimited Characters
+    'UI',   // Unique Identifier
+    'UL',   // Unsigned Long
+    'UN',   // Unknown
+    'UR',   // Universal Resource Identifier / Locator
+    'US',   // Unsigned Short
+    'UT',   // Unlimited Text
+    'UV',   // Unsigned 64-bit Very Long
 ];
 
 export type VR = string;
@@ -27,9 +60,23 @@ export class NativeDicomModel {
 }
 
 export class DicomDataSet {
+    private readonly attributeMap: { [tag: number]: DicomAttribute };
     constructor(
-        public attributes: DicomAttribute[] = []
-    ) {}
+        public attributes: DicomAttribute[],
+    ) {
+        this.attributeMap = {};
+        for (const attribute of attributes) {
+            if (attribute.tag in this.attributeMap) {
+                console.error(this.attributeMap);
+                throw new Error(`Duplicate tag ${attribute.tag.toString(16)}`);
+            }
+            this.attributeMap[attribute.tag] = attribute;
+        }
+    }
+
+    getAttributeByTag(tag: TagValue): DicomAttribute {
+        return this.attributeMap[stringToTag(tag)];
+    }
 
     static parse(xmlElement: Element): DicomDataSet {
         const attributes = Array.from(xmlElement.children).map(elem => DicomAttribute.parse(elem));
@@ -48,13 +95,131 @@ interface DicomValue {
 }
 
 export class DicomAttribute {
+    public tag: number;
     constructor(
-        public tag: string,
+        tag: string,
         public vr: VR,
         public keyword: string | null,
         public privateCreator: string | null,
         public value: DicomValue[] | null,
-    ) { }
+    ) {
+        this.tag = stringToTag(tag);
+    }
+
+    extractValue(): number | string {
+        switch (this.vr) {
+            case 'OF':
+            case 'OD':
+            case 'FL':
+            case 'FD':
+            case 'DS': {
+                return parseFloat(this.getValue().value);
+            }
+            case 'OL':
+            case 'OV':
+            case 'SL':
+            case 'SS':
+            case 'SV':
+            case 'UL':
+            case 'US':
+            case 'UV':
+            case 'ID': {
+                return parseInt(this.getValue().value);
+            }
+            default: {
+                return this.getValue().value;
+            }
+        }
+    }
+
+    getValue(): Value {
+        if (this.value === null) {
+            throw new Error(`getValue: null value`);
+        } else if (this.value.length !== 1) {
+            throw new Error(`getValue: not single value`);
+        } else {
+            const value = this.value[0];
+            if (value instanceof Value) {
+                return value;
+            } else {
+                throw new Error(`getValue: not Value type`);
+            }
+        }
+    }
+
+    getValues(): Value[] {
+        if (this.value === null) {
+            throw new Error(`getValues: null value`);
+        } else {
+            const all = function<T>(arr: T[], f: (v: T) => boolean) {
+                return arr.reduce((acc, v) => acc && f(v), true);
+            };
+            if (all(this.value, v => v instanceof Value)) {
+                return this.value as Value[];
+            } else {
+                throw new Error(`getValues: not Value type`);
+            }
+        }
+    }
+
+    getBulkData(): BulkData {
+        if (this.value === null) {
+            throw new Error(`getBulkData: null value`);
+        } else if (this.value.length !== 1) {
+            throw new Error(`getBulkData: not single value`);
+        } else {
+            const value = this.value[0];
+            if (value instanceof BulkData) {
+                return value;
+            } else {
+                throw new Error(`getBulkData: not BulkData type`);
+            }
+        }
+    }
+
+    getInlineBinary(): InlineBinary {
+        if (this.value === null) {
+            throw new Error(`getInlineBinary: null value`);
+        } else if (this.value.length !== 1) {
+            throw new Error(`getInlineBinary: not single value`);
+        } else {
+            const value = this.value[0];
+            if (value instanceof InlineBinary) {
+                return value;
+            } else {
+                throw new Error(`getInlineBinary: not InlineBinary type`);
+            }
+        }
+    }
+
+    getItems(): Item[] {
+        if (this.value === null) {
+            throw new Error(`getItems: null value`);
+        } else {
+            const all = function<T>(arr: T[], f: (v: T) => boolean) {
+                return arr.reduce((acc, v) => acc && f(v), true);
+            };
+            if (all(this.value, v => v instanceof Item)) {
+                return this.value as Item[];
+            } else {
+                throw new Error(`getItems: not Item type`);
+            }
+        }
+    }
+    getPersonName(): PersonName {
+        if (this.value === null) {
+            throw new Error(`getPersonName: null value`);
+        } else if (this.value.length !== 1) {
+            throw new Error(`getPersonName: not single value`);
+        } else {
+            const value = this.value[0];
+            if (value instanceof PersonName) {
+                return value;
+            } else {
+                throw new Error(`getPersonName: not PersonName type`);
+            }
+        }
+    }
 
     static parse(xmlElement: Element): DicomAttribute {
         assert.equal(xmlElement.nodeName, 'DicomAttribute');
@@ -68,7 +233,7 @@ export class DicomAttribute {
         if (vr === null) {
             throw new Error(`VR is empty: ${xmlElement}`);
         }
-        if (vr in VR) {
+        if (!VR.includes(vr)) {
             throw new Error(`Invalid VR: ${vr}`);
         }
 
@@ -120,7 +285,7 @@ export class DicomAttribute {
         const node = xmlDoc.createElement('DicomAttribute');
 
         if (this.tag) {
-            node.setAttribute('tag', this.tag);
+            node.setAttribute('tag', this.tag.toString(16));
         }
         if (this.vr) {
             node.setAttribute('vr', this.vr);

@@ -1,5 +1,6 @@
 import { NativeDicomModel } from './nativeModel';
 import * as assert from 'assert';
+import { Node, NodeFactory } from './srom';
 
 class DicomParser {
     static parse(xmlString: string): NativeDicomModel {
@@ -18,19 +19,19 @@ export function test() {
     <InlineBinary>AAE=</InlineBinary>
   </DicomAttribute>
   <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI">
-    <Value number="1">1.2.840.10008.5.1.4.1.1.88.11</Value>
+    <Value number="1">1.2.840.10008.5.1.4.1.1.88.22</Value>
   </DicomAttribute>
   <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI">
-    <Value number="1">1.2.276.0.7230010.3.1.4.2155604110.4180.1021041295.20</Value>
+    <Value number="1">2.25.224793923339609181243139195858254344686</Value>
   </DicomAttribute>
   <DicomAttribute keyword="TransferSyntaxUID" tag="00020010" vr="UI">
     <Value number="1">1.2.840.10008.1.2.1</Value>
   </DicomAttribute>
   <DicomAttribute keyword="ImplementationClassUID" tag="00020012" vr="UI">
-    <Value number="1">1.2.276.0.7230010.3.0.3.5.1</Value>
+    <Value number="1">1.3.6.1.4.1.5962.99.2</Value>
   </DicomAttribute>
   <DicomAttribute keyword="ImplementationVersionName" tag="00020013" vr="SH">
-    <Value number="1">OFFIS_DCMTK_351</Value>
+    <Value number="1">PIXELMEDJAVA001</Value>
   </DicomAttribute>
   <DicomAttribute keyword="InstanceCreationDate" tag="00080012" vr="DA">
     <Value number="1">20020510</Value>
@@ -42,10 +43,10 @@ export function test() {
     <Value number="1">1.2.276.0.7230010.3.0.3.5.1</Value>
   </DicomAttribute>
   <DicomAttribute keyword="SOPClassUID" tag="00080016" vr="UI">
-    <Value number="1">1.2.840.10008.5.1.4.1.1.88.11</Value>
+    <Value number="1">1.2.840.10008.5.1.4.1.1.88.22</Value>
   </DicomAttribute>
   <DicomAttribute keyword="SOPInstanceUID" tag="00080018" vr="UI">
-    <Value number="1">1.2.276.0.7230010.3.1.4.2155604110.4180.1021041295.20</Value>
+    <Value number="1">2.25.224793923339609181243139195858254344686</Value>
   </DicomAttribute>
   <DicomAttribute keyword="StudyDate" tag="00080020" vr="DA"/>
   <DicomAttribute keyword="ContentDate" tag="00080023" vr="DA">
@@ -73,19 +74,19 @@ export function test() {
     <Value number="1">OFFIS Structured Reporting Samples</Value>
   </DicomAttribute>
   <DicomAttribute keyword="SeriesDescription" tag="0008103E" vr="LO">
-    <Value number="1">Basic Text Report</Value>
+    <Value number="1">Comprehensive Report</Value>
   </DicomAttribute>
   <DicomAttribute keyword="ReferencedPerformedProcedureStepSequence" tag="00081111" vr="SQ"/>
-  <DicomAttribute keyword="PatientName" tag="00100010" vr="PN">
+    <DicomAttribute keyword="PatientName" tag="00100010" vr="PN">
     <PersonName number="1">
       <Alphabetic>
-        <FamilyName>Osterman</FamilyName>
-        <GivenName>Phillip</GivenName>
-        <MiddleName>B.</MiddleName>
+        <FamilyName>YANG JEONG WON</FamilyName>
       </Alphabetic>
     </PersonName>
   </DicomAttribute>
-  <DicomAttribute keyword="PatientID" tag="00100020" vr="LO"/>
+  <DicomAttribute keyword="PatientID" tag="00100020" vr="LO">
+    <Value number="1">01516725</Value>
+  </DicomAttribute>
   <DicomAttribute keyword="PatientBirthDate" tag="00100030" vr="DA">
     <Value number="1">19220909</Value>
   </DicomAttribute>
@@ -111,16 +112,16 @@ export function test() {
   <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
     <Item number="1">
       <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-        <Value number="1">DT.06</Value>
+        <Value number="1">126000</Value>
       </DicomAttribute>
       <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-        <Value number="1">99_OFFIS_DCMTK</Value>
+        <Value number="1">DCM</Value>
       </DicomAttribute>
       <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-        <Value number="1">Consultation Report</Value>
+        <Value number="1">Imaging Measurement Report</Value>
       </DicomAttribute>
       <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-        <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
+        <Value number="1">1.2.840.10008.6.1.997</Value>
       </DicomAttribute>
     </Item>
   </DicomAttribute>
@@ -137,6 +138,76 @@ export function test() {
   <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
     <Item number="1">
       <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+        <Value number="1">HAS CONCEPT MOD</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+        <Value number="1">CODE</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+            <Value number="1">121049</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+            <Value number="1">DCM</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+            <Value number="1">Language of Content Item and Descendants</Value>
+          </DicomAttribute>
+        </Item>
+      </DicomAttribute>
+      <DicomAttribute keyword="ConceptCodeSequence" tag="0040A168" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+            <Value number="1">eng</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+            <Value number="1">RFC5646</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+            <Value number="1">English</Value>
+          </DicomAttribute>
+        </Item>
+      </DicomAttribute>
+      <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+            <Value number="1">HAS CONCEPT MOD</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+            <Value number="1">CODE</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                <Value number="1">121046</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                <Value number="1">DCM</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                <Value number="1">Country of Language</Value>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+          <DicomAttribute keyword="ConceptCodeSequence" tag="0040A168" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                <Value number="1">US</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                <Value number="1">ISO3166_1</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                <Value number="1">United States</Value>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+        </Item>
+      </DicomAttribute>
+    </Item>
+    <Item number="2">
+      <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
         <Value number="1">HAS OBS CONTEXT</Value>
       </DicomAttribute>
       <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
@@ -145,30 +216,26 @@ export function test() {
       <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
         <Item number="1">
           <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-            <Value number="1">IHE.04</Value>
+            <Value number="1">121008</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-            <Value number="1">99_OFFIS_DCMTK</Value>
+            <Value number="1">DCM</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-            <Value number="1">Observer Name</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-            <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
+            <Value number="1">Person Observer Name</Value>
           </DicomAttribute>
         </Item>
       </DicomAttribute>
       <DicomAttribute keyword="PersonName" tag="0040A123" vr="PN">
         <PersonName number="1">
           <Alphabetic>
-            <FamilyName>Packer</FamilyName>
-            <GivenName>David M.</GivenName>
-            <NameSuffix>M. D.</NameSuffix>
+            <FamilyName>Doe</FamilyName>
+            <GivenName>Jane</GivenName>
           </Alphabetic>
         </PersonName>
       </DicomAttribute>
     </Item>
-    <Item number="2">
+    <Item number="3">
       <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
         <Value number="1">HAS OBS CONTEXT</Value>
       </DicomAttribute>
@@ -178,78 +245,52 @@ export function test() {
       <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
         <Item number="1">
           <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-            <Value number="1">IHE.05</Value>
+            <Value number="1">128774</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-            <Value number="1">99_OFFIS_DCMTK</Value>
+            <Value number="1">DCM</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-            <Value number="1">Observer Organization Name</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-            <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
+            <Value number="1">Person Observer's Login Name</Value>
           </DicomAttribute>
         </Item>
       </DicomAttribute>
       <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
-        <Value number="1">Redlands Clinic</Value>
-      </DicomAttribute>
-    </Item>
-    <Item number="3">
-      <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
-        <Value number="1">CONTAINS</Value>
-      </DicomAttribute>
-      <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
-        <Value number="1">TEXT</Value>
-      </DicomAttribute>
-      <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
-        <Item number="1">
-          <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-            <Value number="1">CODE_01</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-            <Value number="1">99_OFFIS_DCMTK</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-            <Value number="1">Description</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-            <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
-          </DicomAttribute>
-        </Item>
-      </DicomAttribute>
-      <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
-        <Value number="1">This 78-year-old gentleman referred by Dr. Fukuda was also seen by Dr. Mason at the Redlands Clinic. He has been seen in the past by Dr. Klugman.
-The patient developed a lesion in the concha of the left external ear. Recent biopsy confirmed this as being a squamous cell carcinoma. The patient has had a few other skin cancers.
-Of most significant past history is the fact that this patient has a leukemia that has been treated in standard fashion by Dr. Klugman. The patient was then transferred to the Redlands Clinic and by some experimental protocol which, I guess, includes some sort of lymphocyte electrophoresis, has been placed into remission. He is not currently on any antileukemia drugs and has responded extremely well to his medical management.
-On examination, the patient is healthy in general appearance. There is a 1.5 cm lesion on the concha of the ear, which is seen well on photograph of the left external ear. There are numerous soft lymph nodes in both sides of the neck, which I presume are related to his leukemia.</Value>
+        <Value number="1">jdoe</Value>
       </DicomAttribute>
     </Item>
     <Item number="4">
       <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
-        <Value number="1">CONTAINS</Value>
+        <Value number="1">HAS CONCEPT MOD</Value>
       </DicomAttribute>
       <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
-        <Value number="1">TEXT</Value>
+        <Value number="1">CODE</Value>
       </DicomAttribute>
       <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
         <Item number="1">
           <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-            <Value number="1">CODE_02</Value>
+            <Value number="1">121058</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-            <Value number="1">99_OFFIS_DCMTK</Value>
+            <Value number="1">DCM</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-            <Value number="1">Diagnosis</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-            <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
+            <Value number="1">Procedure reported</Value>
           </DicomAttribute>
         </Item>
       </DicomAttribute>
-      <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
-        <Value number="1">Squamous cell carcinoma, relatively superficial, involving the skin of the left external ear, which is seen well on photograph of the left external ear.</Value>
+      <DicomAttribute keyword="ConceptCodeSequence" tag="0040A168" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+            <Value number="1">44136-0</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+            <Value number="1">LN</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+            <Value number="1">PET unspecified body region</Value>
+          </DicomAttribute>
+        </Item>
       </DicomAttribute>
     </Item>
     <Item number="5">
@@ -257,38 +298,328 @@ On examination, the patient is healthy in general appearance. There is a 1.5 cm 
         <Value number="1">CONTAINS</Value>
       </DicomAttribute>
       <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
-        <Value number="1">TEXT</Value>
+        <Value number="1">CONTAINER</Value>
       </DicomAttribute>
       <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
         <Item number="1">
           <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
-            <Value number="1">CODE_03</Value>
+            <Value number="1">111028</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
-            <Value number="1">99_OFFIS_DCMTK</Value>
+            <Value number="1">DCM</Value>
           </DicomAttribute>
           <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
-            <Value number="1">Treatment</Value>
-          </DicomAttribute>
-          <DicomAttribute keyword="CodingSchemeUID" tag="0008010C" vr="UI">
-            <Value number="1">1.2.276.0.7230010.3.0.0.1</Value>
+            <Value number="1">Image Library</Value>
           </DicomAttribute>
         </Item>
       </DicomAttribute>
-      <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
-        <Value number="1">The plan of treatment is as follows: 4500 rad, 15 treatment sessions, using 100 kV radiation.
-The reason for treatment, expected acute reaction, and remote possibility of complication was discussed with this patient at some length, and he accepted therapy as outlined.</Value>
+      <DicomAttribute keyword="ContinuityOfContent" tag="0040A050" vr="CS">
+        <Value number="1">SEPARATE</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ObservationUID" tag="0040A171" vr="UI">
+        <Value number="1">2.25.239108061065263370785162033783811931375</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="ReferencedSOPSequence" tag="00081199" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="ReferencedSOPClassUID" tag="00081150" vr="UI">
+                <Value number="1">1.2.840.10008.5.1.4.1.1.2</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ReferencedSOPInstanceUID" tag="00081155" vr="UI">
+                <Value number="1">1.3.12.2.1107.5.1.4.73100.30000020021821250460600014848</Value>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+          <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+            <Value number="1">CONTAINS</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+            <Value number="1">IMAGE</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">HAS ACQ CONTEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">CODE</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">121139</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Modality</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptCodeSequence" tag="0040A168" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">PT</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Positron emission tomography</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+            </Item>
+            <Item number="2">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">HAS ACQ CONTEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">TEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">121022</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Accession Number</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
+                <Value number="1">AN1234IMG</Value>
+              </DicomAttribute>
+            </Item>
+            <Item number="3">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">HAS ACQ CONTEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">DATE</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">111060</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Study Date</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="Date" tag="0040a121" vr="DA">
+                <Value number="1">20170113</Value>
+              </DicomAttribute>
+            </Item>
+            <Item number="4">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">HAS ACQ CONTEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">TIME</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">111061</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Study Time</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="Time" tag="0040a122" vr="TM">
+                <Value number="1">070844</Value>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+        </Item>
+      </DicomAttribute>
+    </Item>
+    <Item number="6">
+      <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+        <Value number="1">CONTAINS</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+        <Value number="1">CONTAINER</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+            <Value number="1">126010</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+            <Value number="1">DCM</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+            <Value number="1">Imaging Measurements</Value>
+          </DicomAttribute>
+        </Item>
+      </DicomAttribute>
+      <DicomAttribute keyword="ContinuityOfContent" tag="0040A050" vr="CS">
+        <Value number="1">SEPARATE</Value>
+      </DicomAttribute>
+      <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+        <Item number="1">
+          <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+            <Value number="1">CONTAINS</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ObservationDateTime" tag="0040a032" vr="DT">
+            <Value number="1">20020510</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+            <Value number="1">CONTAINER</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                <Value number="1">125007</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                <Value number="1">DCM</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                <Value number="1">Measurement Group</Value>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+          <DicomAttribute keyword="ContinuityOfContent" tag="0040A050" vr="CS">
+            <Value number="1">SEPARATE</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ObservationUID" tag="0040A171" vr="UI">
+            <Value number="1">2.25.56002466128627498886935079903172938041</Value>
+          </DicomAttribute>
+          <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+            <Item number="1">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">HAS OBS CONTEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">TEXT</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">112039</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">Tracking Identifier</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="TextValue" tag="0040A160" vr="UT">
+                <Value number="1">Lesion1</Value>
+              </DicomAttribute>
+            </Item>
+            <Item number="2">
+              <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                <Value number="1">CONTAINS</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                <Value number="1">NUM</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                    <Value number="1">126401</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                    <Value number="1">DCM</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                    <Value number="1">SUVbw</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="ObservationUID" tag="0040A171" vr="UI">
+                <Value number="1">2.25.140657026119469861895824082767088344984</Value>
+              </DicomAttribute>
+              <DicomAttribute keyword="MeasuredValueSequence" tag="0040A300" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="MeasurementUnitsCodeSequence" tag="004008EA" vr="SQ">
+                    <Item number="1">
+                      <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                        <Value number="1">g/ml{SUVbw}</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                        <Value number="1">UCUM</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                        <Value number="1">g/ml{SUVbw}</Value>
+                      </DicomAttribute>
+                    </Item>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="NumericValue" tag="0040A30A" vr="DS">
+                    <Value number="1">1.8828952323684</Value>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+              <DicomAttribute keyword="ContentSequence" tag="0040A730" vr="SQ">
+                <Item number="1">
+                  <DicomAttribute keyword="RelationshipType" tag="0040A010" vr="CS">
+                    <Value number="1">HAS CONCEPT MOD</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="ValueType" tag="0040A040" vr="CS">
+                    <Value number="1">CODE</Value>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="ConceptNameCodeSequence" tag="0040A043" vr="SQ">
+                    <Item number="1">
+                      <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                        <Value number="1">121401</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                        <Value number="1">DCM</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                        <Value number="1">Derivation</Value>
+                      </DicomAttribute>
+                    </Item>
+                  </DicomAttribute>
+                  <DicomAttribute keyword="ConceptCodeSequence" tag="0040A168" vr="SQ">
+                    <Item number="1">
+                      <DicomAttribute keyword="CodeValue" tag="00080100" vr="SH">
+                        <Value number="1">386136009</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodingSchemeDesignator" tag="00080102" vr="SH">
+                        <Value number="1">SCT</Value>
+                      </DicomAttribute>
+                      <DicomAttribute keyword="CodeMeaning" tag="00080104" vr="LO">
+                        <Value number="1">Standard Deviation</Value>
+                      </DicomAttribute>
+                    </Item>
+                  </DicomAttribute>
+                </Item>
+              </DicomAttribute>
+            </Item>
+          </DicomAttribute>
+        </Item>
       </DicomAttribute>
     </Item>
   </DicomAttribute>
 </NativeDicomModel>`;
 
     let model = DicomParser.parse(dicomString);
+    const doc = document.implementation.createDocument(null, null, null);
+    model.deserialize(doc);
 
-    for (let i = 0; i < 1; i++) {
-        const doc = document.implementation.createDocument(null, null, null);
-        model.deserialize(doc);
+    const nodeFactory = new NodeFactory();
+    const srTree: Node = nodeFactory.createNode(model.dataset, null);
+    console.log(srTree);
 
-        model = NativeDicomModel.parse(doc.children[0]);
-    }
+    return model;
 }
