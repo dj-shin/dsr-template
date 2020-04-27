@@ -1,6 +1,6 @@
 import { NativeDicomModel } from './nativeModel';
 import * as assert from 'assert';
-import { Node, NodeFactory } from './srom';
+import { ContainerNode, Node, NodeFactory } from './srom';
 
 class DicomParser {
     static parse(xmlString: string): NativeDicomModel {
@@ -12,7 +12,7 @@ class DicomParser {
     }
 }
 
-export function test() {
+export function test(): ContainerNode {
     const dicomString = `<?xml version="1.0" encoding="UTF-8"?>
 <NativeDicomModel xml:space="preserve">
   <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB">
@@ -621,5 +621,5 @@ export function test() {
     const srTree: Node = nodeFactory.createNode(model.dataset, null);
     console.log(srTree);
 
-    return model;
+    return srTree as ContainerNode;
 }

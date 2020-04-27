@@ -479,7 +479,7 @@ export class PersonName implements DicomValue {
     }
 }
 
-class NameComponents {
+export class NameComponents {
     constructor(
         public familyName: string | null,
         public givenName: string | null,
