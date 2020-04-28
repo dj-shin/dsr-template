@@ -1,6 +1,7 @@
 import React from 'react';
 import { ImageNode } from '../../utils/dicom/srom';
 import { DcmCodedEntry } from './DcmCodedEntry';
+import { Typography } from '@material-ui/core';
 
 interface ImageProps {
     node: ImageNode;
@@ -11,10 +12,22 @@ export const DcmImage: React.FunctionComponent<ImageProps> = props => {
     const nodeName = node.getNodeName();
     return (
         <React.Fragment>
-            {nodeName ? <DcmCodedEntry code={nodeName}/> : <h3>Image Node</h3>}
+            {nodeName ?
+                <DcmCodedEntry code={nodeName}/> :
+                <Typography variant="subtitle2">Image Node</Typography>}
             <ul>
-                {node.getSOPClassUID() && <li>SOP Class ID : {node.getSOPClassUID()}</li>}
-                {node.getSOPInstanceUID() && <li>SOP Instance ID : {node.getSOPInstanceUID()}</li>}
+                {node.getSOPClassUID() &&
+                    <li>
+                        <Typography>
+                            SOP Class ID : {node.getSOPClassUID()}
+                        </Typography>
+                    </li>}
+                {node.getSOPInstanceUID() &&
+                <li>
+                    <Typography>
+                        SOP Instance ID : {node.getSOPInstanceUID()}
+                    </Typography>
+                </li>}
             </ul>
         </React.Fragment>
     );

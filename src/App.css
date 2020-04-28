@@ -1,0 +1,13 @@
+.App {
+    margin: auto;
+    border: 1px dashed black;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.App ul {
+    list-style-type: none;
+    padding-inline-start: 10px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}

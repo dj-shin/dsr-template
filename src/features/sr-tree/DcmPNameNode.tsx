@@ -2,6 +2,7 @@ import React from 'react';
 import { PNameNode } from '../../utils/dicom/srom';
 import { DcmCodedEntry } from './DcmCodedEntry';
 import { NameComponents } from '../../utils/dicom/nativeModel';
+import { Typography } from '@material-ui/core';
 
 interface NameComponentsProps {
     name: NameComponents;
@@ -25,19 +26,26 @@ export const DcmPName: React.FunctionComponent<PNameProps> = props => {
     const pname = node.getValue();
     return (
         <React.Fragment>
-            {nodeName && <DcmCodedEntry code={nodeName}/>}
+            {nodeName &&
+            <DcmCodedEntry code={nodeName}/>}
             <ul>
                 {pname.phonetic &&
                 <li>
-                    Phonetic: <DcmNameComponent name={pname.phonetic}/>
+                    <Typography>
+                        Phonetic : <DcmNameComponent name={pname.phonetic}/>
+                    </Typography>
                 </li>}
                 {pname.alphabetic &&
                 <li>
-                    Alphabetic: <DcmNameComponent name={pname.alphabetic}/>
+                    <Typography>
+                        Alphabetic : <DcmNameComponent name={pname.alphabetic}/>
+                    </Typography>
                 </li>}
                 {pname.ideographic &&
                 <li>
-                    Ideographic: <DcmNameComponent name={pname.ideographic}/>
+                    <Typography>
+                        Ideographic : <DcmNameComponent name={pname.ideographic}/>
+                    </Typography>
                 </li>}
             </ul>
         </React.Fragment>

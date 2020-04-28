@@ -209,6 +209,10 @@ export class TextNode extends Node {
         super(nodeName, 'TEXT', relationshipType, parent, children);
     }
 
+    getNodeName(): CodedEntry {
+        return super.getNodeName() as CodedEntry;
+    }
+
     getValue(): string {
         return this.value;
     }
