@@ -1,4 +1,7 @@
-export const getCodeset = (csd: string): string[] => {
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+
+const getCodesetInternal = (csd: string): string[] => {
     switch (csd) {
         case 'RFC5646': {
             return [
@@ -22,10 +25,13 @@ export const getCodeset = (csd: string): string[] => {
                 'NM unspecified body region',
                 'PET unspecified body region',
                 'PET whole body',
-            ]
+            ];
         }
         default: {
             return ['Unknown Coding Scheme Designator'];
         }
     }
-}
+};
+export const getCodeset = (csd: string): Observable<string[]> => {
+    return of(getCodesetInternal(csd)).pipe(delay(1000));
+};

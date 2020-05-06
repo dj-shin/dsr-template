@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CodeNode } from '../../utils/dicom/srom';
 import { DcmCodedEntry } from './DcmCodedEntry';
 import { Box, TextField } from '@material-ui/core';
@@ -12,7 +12,9 @@ interface CodeProps {
 export const DcmCode: React.FunctionComponent<CodeProps> = props => {
     const node = props.node;
     const nodeName = node.getNodeName();
-    const options = getCodeset(node.getValue().getCodingSchemeDesignator());
+
+    const [options, setOptions] = useState<string[]>([]);
+    getCodeset(node.getValue().getCodingSchemeDesignator()).subscribe(setOptions);
     return (
         <Box display="flex" flexWrap="wrap" flexDirection="row" alignItems="center">
             {nodeName &&
