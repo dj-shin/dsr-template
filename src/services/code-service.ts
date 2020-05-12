@@ -1,5 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { CodedEntry } from '../utils/dicom/srom';
 
 const getCodesetInternal = (csd: string): string[] => {
     switch (csd) {
@@ -32,6 +33,12 @@ const getCodesetInternal = (csd: string): string[] => {
         }
     }
 };
-export const getCodeset = (csd: string): Observable<string[]> => {
-    return of(getCodesetInternal(csd)).pipe(delay(1000));
+export const getCodeset = (code: CodedEntry): Observable<string[]> => {
+    const csd = code.getCodingSchemeDesignator();
+    const cm = code.getCodeMeaning();
+    const list = getCodesetInternal(csd);
+    if (list.findIndex(v => v === cm) < 0) {
+        list.push(cm);
+    }
+    return of(list).pipe(delay(1000));
 };

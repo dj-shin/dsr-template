@@ -619,7 +619,6 @@ export function test(): ContainerNode {
 
     const nodeFactory = new NodeFactory();
     const srTree: Node = nodeFactory.createNode(model.dataset, null);
-    console.log(srTree);
 
     return srTree as ContainerNode;
 }

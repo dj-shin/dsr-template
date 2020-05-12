@@ -1,6 +1,5 @@
 import React from 'react';
 import { NumericNode } from '../../utils/dicom/srom';
-import { DcmCodedEntry } from './DcmCodedEntry';
 import { Box, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
@@ -10,15 +9,8 @@ interface NumProps {
 
 export const DcmNum: React.FunctionComponent<NumProps> = props => {
     const node = props.node;
-    const nodeName = node.getNodeName();
     return (
-        <Box display="flex" flexDirection="row" alignItems="center">
-            {nodeName &&
-            <Box mr={1}>
-                <label>
-                    <DcmCodedEntry code={nodeName}/>
-                </label>
-            </Box>}
+        <React.Fragment>
             <Box mx={1}>
                 <TextField
                     type="number"
@@ -32,6 +24,6 @@ export const DcmNum: React.FunctionComponent<NumProps> = props => {
                     defaultValue={node.getUnits().getCodeMeaning()}
                 />
             </Box>
-        </Box>
+        </React.Fragment>
     );
 };

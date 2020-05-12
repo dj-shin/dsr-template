@@ -1,6 +1,5 @@
 import React from 'react';
 import { TextNode } from '../../utils/dicom/srom';
-import { DcmCodedEntry } from './DcmCodedEntry';
 import { Box, TextField } from '@material-ui/core';
 
 interface TextProps {
@@ -9,14 +8,8 @@ interface TextProps {
 
 export const DcmText: React.FunctionComponent<TextProps> = props => {
     const node = props.node;
-    const nodeName = node.getNodeName();
     return (
-        <Box display="flex" flexDirection="row" alignItems="center">
-            <Box mr={1}>
-                <label>
-                    <DcmCodedEntry code={nodeName}/>
-                </label>
-            </Box>
+        <Box display="flex" flexWrap="wrap" flexDirection="row" alignItems="center" flexGrow={3}>
             <TextField multiline fullWidth defaultValue={node.getValue()}/>
         </Box>
     );
