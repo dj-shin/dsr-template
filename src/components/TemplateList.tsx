@@ -10,14 +10,6 @@ export const TemplateList: React.FunctionComponent<TemplateListProps> = props =>
         { tid: 1420, name: 'Measurements Derived From Multiple ROI Measurements' },
         { tid: 1500, name: 'Imaging Measurement Report' },
         { tid: 1501, name: 'Measurement and Qualitative Evaluation Group' },
-        { tid: 300, name: 'Measurement' },
-        { tid: 1420, name: 'Measurements Derived From Multiple ROI Measurements' },
-        { tid: 1500, name: 'Imaging Measurement Report' },
-        { tid: 1501, name: 'Measurement and Qualitative Evaluation Group' },
-        { tid: 300, name: 'Measurement' },
-        { tid: 1420, name: 'Measurements Derived From Multiple ROI Measurements' },
-        { tid: 1500, name: 'Imaging Measurement Report' },
-        { tid: 1501, name: 'Measurement and Qualitative Evaluation Group' },
     ];
     return (
         <Box>

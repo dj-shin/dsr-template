@@ -11,6 +11,8 @@ import { TemplateParameterTable } from './components/TemplateParameterTable';
 import { ValueTypeList } from './components/ValueTypeList';
 import { TemplateRowEditor } from './components/TemplateRowEditor';
 import { TemplateList } from './components/TemplateList';
+import { measurementReport, SrTemplate } from './utils/dicom/srcm';
+import { RowWrapper } from './components/template-tree/RowWrapper';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -38,6 +40,11 @@ function App() {
     const [node, setNode] = useState<ContainerNode | null>(null);
     useEffect(() => {
         setNode(xml.test() as ContainerNode);
+    }, []);
+
+    const [template, setTemplate] = useState<SrTemplate | null>(null);
+    useEffect(() => {
+        setTemplate(measurementReport);
     }, []);
     const [selected, setSelected] = useState<string | undefined>(undefined);
 
@@ -67,18 +74,31 @@ function App() {
         <div>
             <AppBar position="static">
                 <Tabs value={value} onChange={handleTabChanged}>
+                    <Tab label="Editor"/>
                     <Tab label="Viewer"/>
                 </Tabs>
             </AppBar>
             <TabPanel index={0} value={value}>
                 <form className="App">
+                    <Box display="flex" flexDirection="column" style={{ overflow: "auto" }}>
+                        {template && template.rows.map((row, index) => (
+                            <RowWrapper
+                                key={index}
+                                row={row}
+                                selected={selected}
+                                setSelected={setSelected}
+                                path={(index + 1).toString()}
+                            />
+                        ))}
+                    </Box>
+                </form>
+            </TabPanel>
+            <TabPanel index={1} value={value}>
+                <form className="App">
                     {node &&
-                        <Box style={{ overflow: "auto" }}>
-                            <DcmNodeWrapper node={node} selected={selected} setSelected={setSelected} path="1"/>
-                            <DcmNodeWrapper node={node} selected={selected} setSelected={setSelected} path="1"/>
-                            <DcmNodeWrapper node={node} selected={selected} setSelected={setSelected} path="1"/>
-                            <DcmNodeWrapper node={node} selected={selected} setSelected={setSelected} path="1"/>
-                        </Box>
+                    <Box display="flex" flexDirection="column" style={{ overflow: "auto" }}>
+                        <DcmNodeWrapper path="1" node={node} selected={selected} setSelected={setSelected}/>
+                    </Box>
                     }
                 </form>
             </TabPanel>
