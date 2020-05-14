@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import * as xml from './utils/dicom/xml';
 import { ContainerNode } from './utils/dicom/srom';
@@ -36,6 +36,22 @@ const TabPanel: React.FunctionComponent<TabPanelProps> = props => {
     );
 };
 
+const theme = createMuiTheme({
+    palette: {
+        primary: lightBlue,
+        secondary: blueGrey,
+    },
+    typography: {
+        subtitle1: {
+            fontWeight: "bold",
+        },
+        body1: {
+            '@media (max-width:600px)': {
+                fontSize: '0.8rem',
+            }
+        }
+    }
+});
 function App() {
     const [node, setNode] = useState<ContainerNode | null>(null);
     useEffect(() => {
@@ -48,27 +64,10 @@ function App() {
     }, []);
     const [selected, setSelected] = useState<string | undefined>(undefined);
 
-    const theme = createMuiTheme({
-        palette: {
-            primary: lightBlue,
-            secondary: blueGrey,
-        },
-        typography: {
-            subtitle1: {
-                fontWeight: "bold",
-            },
-            body1: {
-                '@media (max-width:600px)': {
-                    fontSize: '0.8rem',
-                }
-            }
-        }
-    });
-
-    const [value, setValue] = React.useState(0);
-    const handleTabChanged = (event: any, newValue: number) => {
+    const [value, setValue] = useState(0);
+    const handleTabChanged = useCallback((event: any, newValue: number) => {
         setValue(newValue);
-    };
+    }, []);
 
     const viewer = (
         <div>
@@ -113,7 +112,7 @@ function App() {
                         <TemplateParameterTable/>
                     </Box>
                     <Box height="50%" style={{ overflow: "auto" }}>
-                        <TemplateTreeView/>
+                        {template && <TemplateTreeView template={template}/>}
                     </Box>
                 </Box>
                 <Box flexGrow={10} display="flex" flexDirection="column">

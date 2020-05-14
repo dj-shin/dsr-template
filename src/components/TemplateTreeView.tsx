@@ -2,26 +2,30 @@ import React from 'react';
 import { TreeItem, TreeView } from '@material-ui/lab';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronIcon from '@material-ui/icons/ChevronRight';
+import { SrRow, SrTemplate } from '../utils/dicom/srcm';
 
 interface TemplateTreeViewProps {
+    template: SrTemplate;
 }
 export const TemplateTreeView: React.FunctionComponent<TemplateTreeViewProps> = props => {
+    const treeGenerator = (row: SrRow, path: string) => {
+        const children = row.children.map((childRow, index) =>
+            treeGenerator(childRow, `${path}.${(index + 1).toString()}`)
+        );
+        return (
+            <TreeItem key={path} nodeId={path} label={row.concept?.toString()}>
+                {children}
+            </TreeItem>
+        );
+    };
     return (
         <div style={{ overflow: 'auto' }}>
             <h2>Tree View</h2>
             <TreeView
                 defaultCollapseIcon={<ExpandMoreIcon/>}
                 defaultExpandIcon={<ChevronIcon/>}
-                defaultExpanded={['1', '2', '3', '4', '5', '6']}
             >
-                <TreeItem nodeId="1" label="Imaging Measurement Report">
-                    <TreeItem nodeId="2" label="Language of Content Item and Descendants">
-                        <TreeItem nodeId="3" label="Country of Language"/>
-                    </TreeItem>
-                    <TreeItem nodeId="4" label="Person Observer Name"/>
-                    <TreeItem nodeId="5" label="Person Observer's Login Name"/>
-                    <TreeItem nodeId="6" label="Procedure Reported"/>
-                </TreeItem>
+                {props.template.rows.map((row, index) => treeGenerator(row, (index + 1).toString()))}
             </TreeView>
         </div>
     );
