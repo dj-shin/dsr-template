@@ -41,12 +41,34 @@ export enum RequirementType {
     conditional = 'C',
 }
 
+export interface ParameterType {}
 export interface CodedConceptConstraint {
-    toString(): string;
+    getShortString(): string;
+    getFullString(): string;
+    isSingleValue(): this is SingleCodedEntry;
 }
 
-interface SingleCodedEntry extends CodedConceptConstraint {
+export interface SingleCodedEntry extends CodedConceptConstraint, ParameterType {
     code: CodedEntry;
+}
+
+export class CodedEntryParameter implements SingleCodedEntry {
+    constructor(
+        public code: CodedEntry,
+    ) {}
+
+    getFullString(): string {
+        const csv = this.code.getCodingSchemeVersion() ? ` [${this.code.getCodingSchemeVersion()}]` : '';
+        return `(${this.code.getCodeValue()}, ${this.code.getCodingSchemeDesignator()}${csv}, "${this.code.getCodeMeaning()}")`;
+    }
+
+    getShortString(): string {
+        return this.code.getCodeMeaning();
+    }
+
+    isSingleValue(): boolean {
+        return true;
+    }
 }
 
 export class EnumeratedValue implements SingleCodedEntry {
@@ -54,9 +76,17 @@ export class EnumeratedValue implements SingleCodedEntry {
         public code: CodedEntry,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const csv = this.code.getCodingSchemeVersion() ? ` [${this.code.getCodingSchemeVersion()}]` : '';
         return `EV (${this.code.getCodeValue()}, ${this.code.getCodingSchemeDesignator()}${csv}, "${this.code.getCodeMeaning()}")`;
+    }
+
+    getShortString(): string {
+        return this.code.getCodeMeaning();
+    }
+
+    isSingleValue(): boolean {
+        return true;
     }
 }
 export class DefinedTerm implements SingleCodedEntry {
@@ -64,52 +94,84 @@ export class DefinedTerm implements SingleCodedEntry {
         public code: CodedEntry,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const csv = this.code.getCodingSchemeVersion() ? ` [${this.code.getCodingSchemeVersion()}]` : '';
         return `DT (${this.code.getCodeValue()}, ${this.code.getCodingSchemeDesignator()}${csv}, "${this.code.getCodeMeaning()}")`;
     }
+
+    getShortString(): string {
+        return this.code.getCodeMeaning();
+    }
+
+    isSingleValue(): boolean {
+        return true;
+    }
 }
 
-interface ContextGroup extends CodedConceptConstraint {
-    cid: number;    // number?
+export interface ContextGroup extends CodedConceptConstraint {
+    cid: number;
     name?: string;
 }
 export class BaselineCID implements ContextGroup {
     constructor(
         public cid: number,
-        public name: string | undefined,
+        public name?: string,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const name = this.name ? ` ${this.name}` : '';
         return `BCID ${this.cid}${name}`;
+    }
+
+    getShortString(): string {
+        return this.name || `BCID ${this.cid}`;
+    }
+
+    isSingleValue(): boolean {
+        return false;
     }
 }
 export class DefinedCID implements ContextGroup {
     constructor(
         public cid: number,
-        public name: string | undefined,
+        public name?: string,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const name = this.name ? ` ${this.name}` : '';
         return `DCID ${this.cid}${name}`;
     }
+
+    getShortString(): string {
+        return this.name || `DCID ${this.cid}`;
+    }
+
+    isSingleValue(): boolean {
+        return false;
+    }
 }
 
-interface TemplateReference extends CodedConceptConstraint {
+export interface TemplateReference extends CodedConceptConstraint {
     tid: number;
     name?: string;
 }
 export class BaselineTID implements TemplateReference {
     constructor(
         public tid: number,
-        public name: string | undefined,
+        public name?: string,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const name = this.name ? ` ${this.name}` : '';
         return `BTID ${this.tid}${name}`;
+    }
+
+    getShortString(): string {
+        return this.name || `BTID ${this.tid}`
+    }
+
+    isSingleValue(): boolean {
+        return true;
     }
 }
 export class DefinedTID implements TemplateReference {
@@ -118,9 +180,17 @@ export class DefinedTID implements TemplateReference {
         public name: string | undefined,
     ) {}
 
-    toString(): string {
+    getFullString(): string {
         const name = this.name ? ` ${this.name}` : '';
         return `DTID ${this.tid}${name}`;
+    }
+
+    getShortString(): string {
+        return this.name || `DTID ${this.tid}`
+    }
+
+    isSingleValue(): boolean {
+        return true;
     }
 }
 
@@ -132,6 +202,7 @@ export class SrRow {
         public valueMultiplicity: [number, number],
         public requirementType: RequirementType,
         public children: SrRow[],
+        public valueSetConstraint?: ContextGroup,
     ) {}
 }
 
@@ -144,6 +215,19 @@ export class SrTemplate {
         public orderSignificant: boolean,
         public rows: SrRow[],
     ) {
+    }
+
+    traverse(path: string): SrRow {
+        let rows = this.rows;
+        let result = null;
+        for (const idx of path.split('.')) {
+            result = rows[parseInt(idx) - 1];
+            rows = result.children;
+        }
+        if (result === null) {
+            throw new Error(`Cannot find ${path}`);
+        }
+        return result;
     }
 }
 
@@ -180,10 +264,11 @@ export const measurementReport = new SrTemplate(
                 new SrRow(
                     RelationshipType.hasConceptModifier,
                     ValueType.code,
-                    new EnumeratedValue(new CodedEntry('121058', 'DCM', 'Procedure reported', null)),
+                    new EnumeratedValue(new CodedEntry('121058', 'DCM', 'Procedure reported')),
                     [1, Infinity],
                     RequirementType.mandatory,
                     [],
+                    new BaselineCID(100, "Quantative Diagnosis Imaging Procedures"),
                 ),
                 new SrRow(
                     RelationshipType.contains,
@@ -196,7 +281,7 @@ export const measurementReport = new SrTemplate(
                 new SrRow(
                     RelationshipType.contains,
                     ValueType.container,
-                    new EnumeratedValue(new CodedEntry('126010', 'DCM', 'Imaging Measurments', null)),
+                    new EnumeratedValue(new CodedEntry('126010', 'DCM', 'Imaging Measurements')),
                     [1, 1],
                     RequirementType.conditional,
                     [
@@ -212,6 +297,90 @@ export const measurementReport = new SrTemplate(
                             RelationshipType.contains,
                             ValueType.include,
                             new DefinedTID(1401, 'Planar ROI Measurements and Qualitative Evaluations'),
+                            [1, Infinity],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                        new SrRow(
+                            RelationshipType.contains,
+                            ValueType.include,
+                            new DefinedTID(1411, 'Volumetric ROI Measurements and Qualitative Evaluations'),
+                            [1, Infinity],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                        new SrRow(
+                            RelationshipType.contains,
+                            ValueType.include,
+                            new DefinedTID(1501, 'Measurement and Qualitative Evaluation Group'),
+                            [1, Infinity],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                    ],
+                ),
+                new SrRow(
+                    RelationshipType.contains,
+                    ValueType.container,
+                    new EnumeratedValue(new CodedEntry('126011', 'DCM', 'Derived Imaging Measurements')),
+                    [1, 1],
+                    RequirementType.conditional,
+                    [
+                        new SrRow(
+                            RelationshipType.hasConceptModifier,
+                            ValueType.include,
+                            new DefinedTID(4019, 'Algorithm Identification'),
+                            [1, 1],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                        new SrRow(
+                            RelationshipType.contains,
+                            ValueType.include,
+                            new DefinedTID(1420, 'Measurements Derived From Multiple ROI Measurements'),
+                            [1, Infinity],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                    ],
+                ),
+                new SrRow(
+                    RelationshipType.contains,
+                    ValueType.container,
+                    new EnumeratedValue(new CodedEntry('C0034375', 'UMLS', 'Qualitative Evaluations')),
+                    [1, 1],
+                    RequirementType.conditional,
+                    [
+                        new SrRow(
+                            RelationshipType.hasConceptModifier,
+                            ValueType.include,
+                            new DefinedTID(4019, 'Algorithm Identification'),
+                            [1, 1],
+                            RequirementType.userOption,
+                            [],
+                        ),
+                        new SrRow(
+                            RelationshipType.contains,
+                            ValueType.code,
+                            undefined,
+                            [1, Infinity],
+                            RequirementType.userOption,
+                            [
+                                new SrRow(
+                                    RelationshipType.hasConceptModifier,
+                                    ValueType.code,
+                                    new BaselineCID(210, 'Qualitative Evaluation Modifier Types'),
+                                    [1, Infinity],
+                                    RequirementType.userOption,
+                                    [],
+                                    new BaselineCID(211, 'Qualitative Evaluation Modifier Values')
+                                ),
+                            ],
+                        ),
+                        new SrRow(
+                            RelationshipType.contains,
+                            ValueType.text,
+                            undefined,
                             [1, Infinity],
                             RequirementType.userOption,
                             [],

@@ -13,7 +13,7 @@ export const TemplateTreeView: React.FunctionComponent<TemplateTreeViewProps> = 
             treeGenerator(childRow, `${path}.${(index + 1).toString()}`)
         );
         return (
-            <TreeItem key={path} nodeId={path} label={row.concept?.toString()}>
+            <TreeItem key={path} nodeId={path} label={row.concept?.getShortString()}>
                 {children}
             </TreeItem>
         );

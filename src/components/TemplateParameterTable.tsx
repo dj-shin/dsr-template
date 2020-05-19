@@ -23,7 +23,7 @@ export const TemplateParameterTable: React.FunctionComponent<TemplateParameterTa
                     </TableHead>
                     <TableBody>
                         {rows.map(row => (
-                            <TableRow key={row.name}>
+                            <TableRow key={`${row.name}-${row.description}`}>
                                 <TableCell component="th" scope="row">{row.name}</TableCell>
                                 <TableCell>{row.description}</TableCell>
                             </TableRow>

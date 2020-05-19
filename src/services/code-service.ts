@@ -33,7 +33,7 @@ const getCodesetInternal = (csd: string): string[] => {
         }
     }
 };
-export const getCodeset = (code: CodedEntry): Observable<string[]> => {
+export const getCodeset = ((code: CodedEntry): Observable<string[]> => {
     const csd = code.getCodingSchemeDesignator();
     const cm = code.getCodeMeaning();
     const list = getCodesetInternal(csd);
@@ -41,4 +41,4 @@ export const getCodeset = (code: CodedEntry): Observable<string[]> => {
         list.push(cm);
     }
     return of(list).pipe(delay(1000));
-};
+});

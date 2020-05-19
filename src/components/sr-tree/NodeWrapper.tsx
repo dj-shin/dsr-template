@@ -7,7 +7,6 @@ import { DcmImage } from './DcmImageNode';
 import { DcmNum } from './DcmNumNode';
 import { DcmPName } from './DcmPNameNode';
 import { Box } from '@material-ui/core';
-import { DcmCodedEntry } from './DcmCodedEntry';
 
 import './DcmNode.css';
 
@@ -53,7 +52,6 @@ export const DcmNodeWrapper: React.FunctionComponent<NodeProps> = props => {
                  onClick={toggleSelected}
             >
                 <label>
-                    <DcmCodedEntry code={nodeName}/>
                 </label>
             </Box>}
             {body}

@@ -4,7 +4,7 @@ import * as xml from './utils/dicom/xml';
 import { ContainerNode } from './utils/dicom/srom';
 import { DcmNodeWrapper } from './components/sr-tree/NodeWrapper';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { blueGrey, lightBlue } from '@material-ui/core/colors';
+import { lightBlue, indigo } from '@material-ui/core/colors';
 import { AppBar, Box, Tab, Tabs } from '@material-ui/core';
 import { TemplateTreeView } from './components/TemplateTreeView';
 import { TemplateParameterTable } from './components/TemplateParameterTable';
@@ -39,7 +39,7 @@ const TabPanel: React.FunctionComponent<TabPanelProps> = props => {
 const theme = createMuiTheme({
     palette: {
         primary: lightBlue,
-        secondary: blueGrey,
+        secondary: indigo,
     },
     typography: {
         subtitle1: {
@@ -103,7 +103,6 @@ function App() {
             </TabPanel>
         </div>
     );
-
     return (
         <ThemeProvider theme={theme}>
             <Box display="flex" height="100%" flexDirection="row">
@@ -128,7 +127,7 @@ function App() {
                         <TemplateList/>
                     </Box>
                     <Box height="50%" style={{ overflow: "auto" }}>
-                        <TemplateRowEditor/>
+                        <TemplateRowEditor template={template} selected={selected}/>
                     </Box>
                 </Box>
             </Box>

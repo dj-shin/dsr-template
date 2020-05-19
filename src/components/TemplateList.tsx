@@ -1,30 +1,64 @@
-import React from 'react';
-import { Box, List, ListItem, ListItemIcon, ListItemText, TextField } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import {
+    Box, createStyles,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    TextField,
+    Theme,
+    Tooltip,
+    Typography
+} from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
+import { TemplateReference } from '../utils/dicom/srcm';
+import { getTemplateList } from '../services/terminology-service';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        tooltip: {
+            fontSize: theme.typography.pxToRem(15),
+        },
+    }),
+);
 
 interface TemplateListProps {
 }
 export const TemplateList: React.FunctionComponent<TemplateListProps> = props => {
-    const templates = [
-        { tid: 300, name: 'Measurement' },
-        { tid: 1420, name: 'Measurements Derived From Multiple ROI Measurements' },
-        { tid: 1500, name: 'Imaging Measurement Report' },
-        { tid: 1501, name: 'Measurement and Qualitative Evaluation Group' },
-    ];
+    const [templates, setTemplates] = useState<TemplateReference[]>([]);
+    const classes = useStyles();
+    useEffect(() => {
+        const subscription = getTemplateList().subscribe(setTemplates);
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
     return (
         <Box>
             <h2>Template List</h2>
             <TextField id="template-search" label='Search with template name or ID' fullWidth/>
             <List dense={false}>
                 {templates.map(template => (
-                    <ListItem key={template.tid}>
-                        <ListItemIcon>
+                    <Tooltip
+                        key={template.tid}
+                        title={
+                            <Typography
+                                className={classes.tooltip}
+                            >
+                                {template.getFullString()}
+                            </Typography>
+                        }
+                    >
+                        <ListItem key={template.tid}>
+                            <ListItemIcon>
                             <DescriptionIcon />
                         </ListItemIcon>
                         <ListItemText
                             primary={template.name}
                         />
                     </ListItem>
+                    </Tooltip>
                 ))}
             </List>
         </Box>

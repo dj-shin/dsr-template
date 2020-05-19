@@ -6,7 +6,7 @@ export class CodedEntry {
         private cv: string,
         private csd: string,
         private cm: string,
-        private csv: string | null,
+        private csv?: string,
     ) { }
 
     getCodeValue(): string {
@@ -18,8 +18,12 @@ export class CodedEntry {
     getCodeMeaning(): string {
         return this.cm;
     }
-    getCodingSchemeVersion(): string | null {
+    getCodingSchemeVersion(): string | undefined {
         return this.csv;
+    }
+
+    getShortString(): string {
+        return this.getCodeMeaning();
     }
 
     equals(obj: any): boolean {
