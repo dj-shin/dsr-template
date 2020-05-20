@@ -11,8 +11,14 @@ import { TemplateParameterTable } from './components/TemplateParameterTable';
 import { ValueTypeList } from './components/ValueTypeList';
 import { TemplateRowEditor } from './components/TemplateRowEditor';
 import { TemplateList } from './components/TemplateList';
-import { measurementReport, SrTemplate } from './utils/dicom/srcm';
+import {
+    measurementReport,
+    RequirementType,
+    SrRow,
+    ValueType
+} from './utils/dicom/srcm';
 import { RowWrapper } from './components/template-tree/RowWrapper';
+import { useImmer } from 'use-immer';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -36,6 +42,7 @@ const TabPanel: React.FunctionComponent<TabPanelProps> = props => {
     );
 };
 
+export const rootPath = 'ROOT';
 const theme = createMuiTheme({
     palette: {
         primary: lightBlue,
@@ -58,11 +65,48 @@ function App() {
         setNode(xml.test() as ContainerNode);
     }, []);
 
-    const [template, setTemplate] = useState<SrTemplate | null>(null);
-    useEffect(() => {
-        setTemplate(measurementReport);
-    }, []);
     const [selected, setSelected] = useState<string | undefined>(undefined);
+    const addChildRow = (path: string, valueType: ValueType) => {
+        const newRow = new SrRow(
+            undefined,
+            valueType,
+            undefined,
+            [1, 1],
+            RequirementType.mandatory,
+            [],
+        );
+        const newPath = `${path}.${link[path].length + 1}`;
+        updateRow(draft => {
+            draft[newPath] = newRow;
+        });
+        updateLink(draft => {
+            draft[path].push(newPath);
+            draft[newPath] = [];
+        });
+    };
+
+    const [rows, updateRow] = useImmer<{ [path: string]: SrRow }>({});
+    const [link, updateLink] = useImmer<{ [path: string]: string[] }>({});
+    const addSrRow = useCallback((row: SrRow, path: string) => {
+        const childrenPaths = row.children.map((child, index) => `${path}.${(index + 1)}`);
+        updateRow(draft => {
+            draft[path] = row;
+        });
+        updateLink(draft => {
+            draft[path] = childrenPaths;
+        });
+        row.children.forEach((child, index) => {
+            addSrRow(child, `${path}.${index + 1}`);
+        });
+    }, [updateLink, updateRow]);
+
+    useEffect(() => {
+        const rows = measurementReport.rows;
+        updateLink(draft => {
+            draft[rootPath] = rows.map((row, index) => `${index + 1}`);
+        })
+        rows.forEach((row, index) => addSrRow(row, `${index + 1}`));
+    }, [addSrRow, updateLink]);
 
     const [value, setValue] = useState(0);
     const handleTabChanged = useCallback((event: any, newValue: number) => {
@@ -80,13 +124,15 @@ function App() {
             <TabPanel index={0} value={value}>
                 <form className="App">
                     <Box display="flex" flexDirection="column" style={{ overflow: "auto" }}>
-                        {template && template.rows.map((row, index) => (
+                        {(link && link[rootPath]) && link[rootPath].map(path => (
                             <RowWrapper
-                                key={index}
-                                row={row}
+                                key={path}
                                 selected={selected}
                                 setSelected={setSelected}
-                                path={(index + 1).toString()}
+                                addChildRow={addChildRow}
+                                path={path}
+                                rows={rows}
+                                link={link}
                             />
                         ))}
                     </Box>
@@ -111,7 +157,7 @@ function App() {
                         <TemplateParameterTable/>
                     </Box>
                     <Box height="50%" style={{ overflow: "auto" }}>
-                        {template && <TemplateTreeView template={template}/>}
+                        {(rows && link && link[rootPath]) && <TemplateTreeView rows={rows} link={link}/>}
                     </Box>
                 </Box>
                 <Box flexGrow={10} display="flex" flexDirection="column">
@@ -127,7 +173,7 @@ function App() {
                         <TemplateList/>
                     </Box>
                     <Box height="50%" style={{ overflow: "auto" }}>
-                        <TemplateRowEditor template={template} selected={selected}/>
+                        <TemplateRowEditor rows={rows} selected={selected}/>
                     </Box>
                 </Box>
             </Box>

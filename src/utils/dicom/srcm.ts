@@ -229,6 +229,11 @@ export class SrTemplate {
         }
         return result;
     }
+
+    addChildRowAt(path: string, row: SrRow) {
+        const target = this.traverse(path);
+        target.children.push(row);
+    }
 }
 
 export const measurementReport = new SrTemplate(

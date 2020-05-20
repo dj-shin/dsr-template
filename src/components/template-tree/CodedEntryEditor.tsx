@@ -48,7 +48,7 @@ enum EditorState {
 
 interface CodedEntryEditorProps extends RowWrapperProps {}
 export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = props => {
-    const row = props.row;
+    const row = props.rows[props.path];
     const conceptName = row.concept;
     const [editorState, setEditorState] = useState(conceptName === undefined ? EditorState.empty : EditorState.selected);
     const [code, setCode] = useState(conceptName || null);
@@ -59,7 +59,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
 
     useEffect(() => {
         const sources: Observable<CodedConceptConstraint[]>[] = [];
-        switch (props.row.valueType) {
+        switch (row.valueType) {
             case ValueType.include: {
                 sources.push(getTemplateList());
                 break;
@@ -77,7 +77,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
         return () => {
             subscription.unsubscribe();
         };
-    }, [props.row.valueType]);
+    }, [row.valueType]);
 
     useEffect(() => {
         const subscription = getCodesFromContextGroup(conceptName).subscribe(setOptions);

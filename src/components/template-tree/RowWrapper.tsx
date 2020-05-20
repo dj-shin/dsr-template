@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
             display: "flex",
             alignItems: "stretch",
             alignContent: "stretch",
+        },
+        onDropHover: {
+            backgroundColor: "pink",
         }
     }),
 );
@@ -68,6 +71,7 @@ const LabelWrapper: React.FunctionComponent<LabelWrapperProps> = props => {
             props.setSelected(props.path);
         }
     }, [props]);
+    const row = props.rows[props.path];
 
     const icon = ((valueType: ValueType) => {
         switch (valueType) {
@@ -84,8 +88,15 @@ const LabelWrapper: React.FunctionComponent<LabelWrapperProps> = props => {
                 return (<TextFieldsIcon/>);
             }
         }
-    })(props.row.valueType);
+    })(row.valueType);
+
     const classes = useStyles();
+    let className = classes.parentBox;
+
+    const [hover, setHover] = useState<number>(0);
+    if (hover > 0) {
+        className += ` ${classes.onDropHover}`;
+    }
 
     return (
         <Box
@@ -96,9 +107,29 @@ const LabelWrapper: React.FunctionComponent<LabelWrapperProps> = props => {
         >
             <Box
                 flexWrap="wrap"
-                className={classes.parentBox}
+                className={className}
                 style={{ alignItems: "center" }}
                 bgcolor={props.selected === props.path ? "primary.light" : ""}
+                onDragEnter={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    setHover(hover + 1);
+                }}
+                onDragOver={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                }}
+                onDragLeave={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    setHover(hover - 1);
+                }}
+                onDrop={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    setHover(0);
+                    props.addChildRow(props.path, ev.dataTransfer.getData("text") as ValueType);
+                }}
             >
                 {icon}
                 <Box
@@ -132,21 +163,23 @@ const LabelWrapper: React.FunctionComponent<LabelWrapperProps> = props => {
 
 export interface RowWrapperProps {
     path: string;
-    row: SrRow;
+
     selected: string | undefined;
     setSelected: Dispatch<SetStateAction<string | undefined>>;
+    addChildRow: (path: string, valueType: ValueType) => void;
+
+    rows: { [path: string]: SrRow };
+    link: { [path: string]: string[] };
 }
 export const RowWrapper: React.FunctionComponent<RowWrapperProps> = props => {
-    const row = props.row;
+    const row = props.rows[props.path];
 
-    const children = row.children.map((row, idx) => {
-        const path = `${props.path}.${(idx + 1)}`;
+    const children = props.link[props.path].map(childPath => {
         return (
             <RowWrapper
-                key={path}
+                key={childPath}
                 {...props}
-                path={path}
-                row={row}
+                path={childPath}
             />
         );
     });

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableRow, TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import { SrRow, SrTemplate } from '../utils/dicom/srcm';
+import { SrRow } from '../utils/dicom/srcm';
 
 interface TemplateRowEditorProps {
-    template: SrTemplate | null;
+    rows: { [path: string]: SrRow };
     selected?: string;
 }
 export const TemplateRowEditor: React.FunctionComponent<TemplateRowEditorProps> = props => {
     let row: SrRow | undefined = undefined;
-    if (props.template && props.selected) {
-        row = props.template.traverse(props.selected);
+    if (props.rows && props.selected) {
+        row = props.rows[props.selected];
     }
     const rows = row ? [
         { name: 'Value Type', description: row.valueType },

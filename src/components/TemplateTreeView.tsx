@@ -2,16 +2,16 @@ import React from 'react';
 import { TreeItem, TreeView } from '@material-ui/lab';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronIcon from '@material-ui/icons/ChevronRight';
-import { SrRow, SrTemplate } from '../utils/dicom/srcm';
+import { SrRow } from '../utils/dicom/srcm';
+import { rootPath } from '../App';
 
 interface TemplateTreeViewProps {
-    template: SrTemplate;
+    rows: { [path: string]: SrRow };
+    link: { [path: string]: string[] };
 }
 export const TemplateTreeView: React.FunctionComponent<TemplateTreeViewProps> = props => {
     const treeGenerator = (row: SrRow, path: string) => {
-        const children = row.children.map((childRow, index) =>
-            treeGenerator(childRow, `${path}.${(index + 1).toString()}`)
-        );
+        const children = props.link[path].map(childPath => treeGenerator(props.rows[childPath], childPath));
         return (
             <TreeItem key={path} nodeId={path} label={row.concept?.getShortString()}>
                 {children}
@@ -25,7 +25,7 @@ export const TemplateTreeView: React.FunctionComponent<TemplateTreeViewProps> = 
                 defaultCollapseIcon={<ExpandMoreIcon/>}
                 defaultExpandIcon={<ChevronIcon/>}
             >
-                {props.template.rows.map((row, index) => treeGenerator(row, (index + 1).toString()))}
+                {props.link[rootPath].map(path => treeGenerator(props.rows[path], path))}
             </TreeView>
         </div>
     );
