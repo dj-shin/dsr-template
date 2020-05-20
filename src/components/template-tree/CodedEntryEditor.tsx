@@ -80,11 +80,13 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
     }, [row.valueType]);
 
     useEffect(() => {
-        const subscription = getCodesFromContextGroup(conceptName).subscribe(setOptions);
-        return () => {
-            subscription.unsubscribe();
-        };
-    }, [conceptName])
+        if (code) {
+            const subscription = getCodesFromContextGroup(code).subscribe(setOptions);
+            return () => {
+                subscription.unsubscribe();
+            };
+        }
+    }, [code])
 
     switch (editorState) {
         case EditorState.empty: {
