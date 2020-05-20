@@ -13,6 +13,13 @@ import { CodedEntry } from '../utils/dicom/srom';
 
 const contextGroupList = [
     new DefinedCID(7021, 'Measurement Report Document Titles'),
+    new DefinedCID(100, 'Quantitative Diagnostic Imaging Procedures'),
+    new DefinedCID(210, 'Qualitative Evaluation Modifier Types'),
+    new DefinedCID(211, 'Qualitative Evaluation Modifier Values'),
+    new DefinedCID(212, 'Generic Anatomic Location Modifiers'),
+    new DefinedCID(244, 'Laterality'),
+    new DefinedCID(245, 'Laterality with Median'),
+    new DefinedCID(247, 'Laterality Left-Right Only'),
 ];
 const codeList = [
     new EnumeratedValue(new CodedEntry('121058', 'DCM', 'Procedure reported')),
