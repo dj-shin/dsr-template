@@ -12,8 +12,7 @@ import {
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
-import { RowWrapperProps } from './RowWrapper';
-import { CodedConceptConstraint, ValueType } from '../../utils/dicom/srcm';
+import { CodedConceptConstraint, ISrRow, SrRow, ValueType } from '../../utils/dicom/srcm';
 import {
     getCodeList,
     getCodesFromContextGroup,
@@ -22,6 +21,7 @@ import {
 } from '../../services/terminology-service';
 import { combineLatest, Observable } from 'rxjs';
 import { CodedEntry } from '../../utils/dicom/srom';
+import { Draft } from 'immer';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,12 +46,14 @@ enum EditorState {
     selected,
 }
 
-interface CodedEntryEditorProps extends RowWrapperProps {}
+interface CodedEntryEditorProps extends ISrRow {
+    path: string;
+    selected: string | undefined;
+    updateRows: (f: (draft: Draft<{ [path: string]: SrRow }>) => void) => void;
+}
 export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = props => {
-    const row = props.rows[props.path];
-    const conceptName = row.concept;
+    const conceptName = props.concept;
     const [editorState, setEditorState] = useState(conceptName === undefined ? EditorState.empty : EditorState.selected);
-    const [code, setCode] = useState(conceptName || null);
     const classes = useStyles();
 
     const [codes, setCodes] = useState<CodedConceptConstraint[]>([]);
@@ -59,7 +61,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
 
     useEffect(() => {
         const sources: Observable<CodedConceptConstraint[]>[] = [];
-        switch (row.valueType) {
+        switch (props.valueType) {
             case ValueType.include: {
                 sources.push(getTemplateList());
                 break;
@@ -77,16 +79,16 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
         return () => {
             subscription.unsubscribe();
         };
-    }, [row.valueType]);
+    }, [props.valueType]);
 
     useEffect(() => {
-        if (code) {
-            const subscription = getCodesFromContextGroup(code).subscribe(setOptions);
+        if (conceptName) {
+            const subscription = getCodesFromContextGroup(conceptName).subscribe(setOptions);
             return () => {
                 subscription.unsubscribe();
             };
         }
-    }, [code])
+    }, [conceptName])
 
     switch (editorState) {
         case EditorState.empty: {
@@ -101,7 +103,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
                     className={classes.anonymousLabel}
                     color={props.selected === props.path ? "primary.contrastText" : ""}
                 >
-                    Anonymous {row.valueType}
+                    Anonymous {props.valueType}
                 </Box>
             );
         }
@@ -111,7 +113,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
                     <Autocomplete
                         options={codes}
                         getOptionLabel={(option: CodedConceptConstraint) => option.getShortString()}
-                        defaultValue={code || undefined}
+                        defaultValue={conceptName || undefined}
                         renderOption={(option) => (
                             <Tooltip
                                 title={
@@ -138,9 +140,11 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
                                 label="Search coded entry"
                             />
                         )}
-                        onBlur={() => setEditorState(code ? EditorState.selected : EditorState.empty)}
+                        onBlur={() => setEditorState(conceptName ? EditorState.selected : EditorState.empty)}
                         onChange={(ev: ChangeEvent<{}>, value: CodedConceptConstraint | null) => {
-                            setCode(value);
+                            props.updateRows(draft => {
+                                draft[props.path].concept = value || undefined;
+                            });
                             setEditorState(value !== null ? EditorState.selected : EditorState.empty);
                         }}
                     />
@@ -153,7 +157,7 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
             ));
             return (
                 <React.Fragment>
-                    {code &&
+                    {conceptName &&
                     <Box
                         flex={1}
                         width="100%"
@@ -163,10 +167,10 @@ export const CodedEntryEditor: React.FunctionComponent<CodedEntryEditorProps> = 
                         }}
                         color={props.selected === props.path ? "primary.contrastText" : ""}
                     >
-                        {code.isSingleValue() ?
-                            code.getShortString() :
+                        {conceptName.isSingleValue() ?
+                            conceptName.getShortString() :
                             <FormControl>
-                                <InputLabel id={`select-label-${props.path}`} className={classes.clipLabel}>{code.getShortString()}</InputLabel>
+                                <InputLabel id={`select-label-${props.path}`} className={classes.clipLabel}>{conceptName.getShortString()}</InputLabel>
                                 <Select labelId={`select-label-${props.path}`} id={`select-${props.path}`} value="" native>
                                     <option value=""/>
                                     {optionList}

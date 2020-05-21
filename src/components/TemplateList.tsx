@@ -50,14 +50,20 @@ export const TemplateList: React.FunctionComponent<TemplateListProps> = props =>
                             </Typography>
                         }
                     >
-                        <ListItem key={template.tid}>
+                        <ListItem
+                            key={template.tid}
+                            draggable={true}
+                            onDragStart={(ev) => {
+                                ev.dataTransfer.setData("template.tid", template.tid.toString());
+                            }}
+                        >
                             <ListItemIcon>
-                            <DescriptionIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={template.name}
-                        />
-                    </ListItem>
+                                <DescriptionIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={template.name}
+                            />
+                        </ListItem>
                     </Tooltip>
                 ))}
             </List>

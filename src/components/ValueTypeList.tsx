@@ -29,7 +29,7 @@ export const ValueTypeList: React.FunctionComponent<ValueTypeListProps> = props 
                     textAlign="center"
                     draggable={true}
                     onDragStart={(ev) => {
-                        ev.dataTransfer.setData("text", type);
+                        ev.dataTransfer.setData("valuetype", type);
                     }}
                 >
                     {icon}

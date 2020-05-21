@@ -120,3 +120,6 @@ export const getCodesFromContextGroup = ((contextGroup?: CodedConceptConstraint)
         return of([]);
     }
 });
+export const getTemplateByTid = (tid: number): Observable<TemplateReference | undefined> => {
+    return of(templateList.find(template => template.tid === tid));
+};

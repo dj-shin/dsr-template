@@ -76,7 +76,7 @@ function App() {
             [],
         );
         const newPath = `${path}.${link[path].length + 1}`;
-        updateRow(draft => {
+        updateRows(draft => {
             draft[newPath] = newRow;
         });
         updateLink(draft => {
@@ -85,11 +85,11 @@ function App() {
         });
     };
 
-    const [rows, updateRow] = useImmer<{ [path: string]: SrRow }>({});
+    const [rows, updateRows] = useImmer<{ [path: string]: SrRow }>({});
     const [link, updateLink] = useImmer<{ [path: string]: string[] }>({});
     const addSrRow = useCallback((row: SrRow, path: string) => {
         const childrenPaths = row.children.map((child, index) => `${path}.${(index + 1)}`);
-        updateRow(draft => {
+        updateRows(draft => {
             draft[path] = row;
         });
         updateLink(draft => {
@@ -98,7 +98,7 @@ function App() {
         row.children.forEach((child, index) => {
             addSrRow(child, `${path}.${index + 1}`);
         });
-    }, [updateLink, updateRow]);
+    }, [updateLink, updateRows]);
 
     useEffect(() => {
         const rows = measurementReport.rows;
@@ -124,17 +124,22 @@ function App() {
             <TabPanel index={0} value={value}>
                 <form className="App">
                     <Box display="flex" flexDirection="column" style={{ overflow: "auto" }}>
-                        {(link && link[rootPath]) && link[rootPath].map(path => (
-                            <RowWrapper
-                                key={path}
-                                selected={selected}
-                                setSelected={setSelected}
-                                addChildRow={addChildRow}
-                                path={path}
-                                rows={rows}
-                                link={link}
-                            />
-                        ))}
+                        {(link && link[rootPath]) && link[rootPath].map(path => {
+                            const { children, ...row } = rows[path];
+                            return (
+                                <RowWrapper
+                                    {...row}
+                                    key={path}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                    addChildRow={addChildRow}
+                                    path={path}
+                                    rows={rows}
+                                    link={link}
+                                    updateRows={updateRows}
+                                />
+                            );
+                        })}
                     </Box>
                 </form>
             </TabPanel>

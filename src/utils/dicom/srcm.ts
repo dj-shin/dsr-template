@@ -41,6 +41,10 @@ export enum RequirementType {
     conditional = 'C',
 }
 
+interface DataClass<D> {
+    serialize(): D;
+}
+
 export interface ParameterType {}
 export interface CodedConceptConstraint {
     getShortString(): string;
@@ -194,7 +198,15 @@ export class DefinedTID implements TemplateReference {
     }
 }
 
-export class SrRow {
+export interface ISrRow {
+    relationshipType?: RelationshipType,
+    valueType: ValueType,
+    concept?: CodedConceptConstraint;
+    valueMultiplicity: [number, number];
+    requirementType: RequirementType;
+    valueSetConstraint?: ContextGroup;
+}
+export class SrRow implements ISrRow {
     constructor(
         public relationshipType: RelationshipType | undefined,
         public valueType: ValueType,
@@ -204,8 +216,28 @@ export class SrRow {
         public children: SrRow[],
         public valueSetConstraint?: ContextGroup,
     ) {}
+
+    setConcept(concept?: CodedConceptConstraint): SrRow {
+        return new SrRow(
+            this.relationshipType,
+            this.valueType,
+            concept,
+            this.valueMultiplicity,
+            this.requirementType,
+            this.children,
+            this.valueSetConstraint,
+        );
+    }
 }
 
+export interface ISrTemplate {
+    tid: number;
+    name: string;
+    extensible: boolean;
+    isRoot: boolean;
+    orderSignificant: boolean;
+    rows: SrRow[];
+}
 export class SrTemplate {
     constructor(
         public tid: number,
